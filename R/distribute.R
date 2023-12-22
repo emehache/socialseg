@@ -1,3 +1,11 @@
+#' Distribute the data
+#'
+#' This function ...
+#'
+#' @param input Path to the input file
+#' @return A data.table
+#' @export
+
 distribuir <- function(input, Ngrid, lx, ly, vars, verbose = T){
   #Ngrid=50
 
