@@ -6,7 +6,7 @@
 #' @return A data.table
 #' @export
 
-distribuir <- function(input, Ngrid, lx, ly, vars, verbose = T){
+distribute <- function(input, Ngrid, lx, ly, vars, verbose = T){
   #Ngrid=50
 
   if (!missing(vars)) {
