@@ -53,7 +53,7 @@ distribute <- function(input, Ngrid, lx, ly, vars, verbose = T){
 
   # vars <- names(as.data.table(input))
 
-  datos <- input %>%
+  data <- input %>%
     rgeos::gCentroid(byid = T) %>%
     .@coords %>%
     cbind(as.data.table(input)) %>%
@@ -70,19 +70,19 @@ distribute <- function(input, Ngrid, lx, ly, vars, verbose = T){
 
   # N es la cantidad de puntos de la grilla en cada poligono
 
-  puntos_problema <- datos[, by = .(x,y), .N] %>%
+  puntos_problema <- data[, by = .(x,y), .N] %>%
     .[N>1, !"N"] %>%
-    merge(datos, by = c("x", "y")) %>%
+    merge(data, by = c("x", "y")) %>%
     .[, unique(i)]
 
   # vars <- names(input@data)
-  datos[i %in% puntos_problema, by = i,(vars) := lapply(.SD, mean), .SDcols = vars]
-  datos <- unique(datos, by = c("x", "y", vars))
+  data[i %in% puntos_problema, by = i,(vars) := lapply(.SD, mean), .SDcols = vars]
+  data <- unique(data, by = c("x", "y", vars))
 
 
   if (verbose) {
-    # id_faltantes <- setdiff(1:nrow(input),unique(datos$id))
-    id_faltantes <- setdiff(id_poly,unique(datos$id))
+    # id_faltantes <- setdiff(1:nrow(input),unique(data$id))
+    id_faltantes <- setdiff(id_poly,unique(data$id))
     cat("Cantidad de poligonos no representados en la grilla:", length(id_faltantes), "\n")
 
     cat("Suma de las variables en los polígonos faltantes:\n")
@@ -93,5 +93,5 @@ distribute <- function(input, Ngrid, lx, ly, vars, verbose = T){
       print
   }
 
-  return(datos)
+  return(data)
 }
