@@ -18,4 +18,5 @@ Depends:
   magrittr,
   ggplot2,
   seg,
-  sf
+  sf,
+  spatstat
