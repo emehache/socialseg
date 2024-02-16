@@ -17,7 +17,7 @@ reverselog_trans <- function(base = exp(1)) {
 #'
 #' This function ...
 #'
-#' @param base input, var Path to the input file
+#' @param base base
 #' @return A data.table
 
 

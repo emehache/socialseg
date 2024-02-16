@@ -7,7 +7,7 @@
 log_trans(base = exp(1))
 }
 \arguments{
-\item{base}{input, var Path to the input file}
+\item{base}{base}
 }
 \value{
 A data.table
