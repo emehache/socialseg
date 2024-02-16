@@ -1,14 +1,33 @@
+---
+output: github_document
+---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  eval = FALSE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+library(knitr)
+```
+
 
 # socialseg
 
 # Usage
 
-``` r
+```{r}
 data(input)
 input %>% 
   distribute(Ngrid = 50, vars = c("HExtendido", "HNuclear")) %>% 
   segsmooth(sigma = 5) %>% 
   segplot(input)
+
 ```
+
+
+
