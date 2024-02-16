@@ -6,7 +6,6 @@
 #'
 #' @return A data.table
 #'
-#' @export
 
 reverselog_trans <- function(base = exp(1)) {
   trans <- function(x) -log(x + 1, base)
@@ -20,7 +19,7 @@ reverselog_trans <- function(base = exp(1)) {
 #'
 #' @param base input, var Path to the input file
 #' @return A data.table
-#' @export
+
 
 log_trans <- function(base = exp(1)) {
   trans <- function(x) log(x + 1, base)
