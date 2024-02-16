@@ -2,4 +2,4 @@
 
 export(distribute)
 export(estimate)
-export(smooth)
+export(segsmooth)

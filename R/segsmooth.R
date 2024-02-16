@@ -6,7 +6,7 @@
 #' @return A data.table
 #' @export
 
-smooth <- function(data, sigma, bleed = F, normalise = F, rescale = T) {
+segsmooth <- function(data, sigma, bleed = F, normalise = F, rescale = T) {
 
   vars <- setdiff(names(data), c("id", "i", "x", "y", "N"))
 
