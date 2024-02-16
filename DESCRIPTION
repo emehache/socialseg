@@ -14,4 +14,8 @@ Imports:
   rgeos
 Depends:
   data.table,
-  sp
+  sp,
+  magrittr,
+  ggplot2,
+  seg,
+  sf
