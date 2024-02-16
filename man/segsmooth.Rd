@@ -7,7 +7,9 @@
 segsmooth(data, sigma, bleed = F, normalise = F, rescale = T)
 }
 \arguments{
-\item{data, }{sigma, ...}
+\item{data}{...}
+
+\item{sigma}{...}
 }
 \value{
 A data.table

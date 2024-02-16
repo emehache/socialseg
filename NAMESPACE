@@ -2,4 +2,9 @@
 
 export(distribute)
 export(estimate)
+export(log_trans)
+export(read_gpkg)
+export(reverselog_trans)
+export(scale_density)
+export(segplot)
 export(segsmooth)
