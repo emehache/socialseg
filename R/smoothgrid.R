@@ -66,12 +66,13 @@ matriz <- gridmap$distances
   pi_m <- tot_m/tot
   ent_p <- rowSums(-(dd/rowSums(dd))*log((dd/rowSums(dd)), base = M))
   E <- -sum(pi_m * log(pi_m, base = M))
-  (H <- 1 - (sum(tot_p * ent_p) / (tot * E)))
+  H <- 1 - (sum(tot_p * ent_p) / (tot * E))
+
 
   values <- list(H = H, tot = tot, E = E, tot_p = tot_p, ent_p = ent_p)
 
-  output <- list(grid = suavizado, input = grid$input, distances = grid$distances, values = values)
-  class(output) <- "gridmap.environment"
+  output <- list(grid = suavizado, input = gridmap$input, distances = gridmap$distances, values = values)
+  class(output) <- "gridmap"
 
   return(output)
 

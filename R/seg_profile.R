@@ -5,8 +5,7 @@
 #' @param input Path to the input file
 #' @return gridmap
 #' @export
-#'
-environments <- function(gridmap, gamma, vars, nucleo = "quartic") {
+seg_profile <- function(gridmap, gamma, vars, nucleo = "quartic") {
 
 
   grid <- gridmap$grid
@@ -63,13 +62,11 @@ environments <- function(gridmap, gamma, vars, nucleo = "quartic") {
   Hp <- tot_p*(E-Ep)/tot/E
   H <- sum(Hp)
 
-
+  values <- list(H = H, Hp = Hp, tot = tot, E = E, tot_p = tot_p, ent_p = ent_p)
   envir <- cbind(envir, Ep = Ep, tot_p = tot_p, Hp = Hp)
 
-  values <- list(H = H, Hp = Hp, tot = tot, E = E, tot_p = tot_p, ent_p = ent_p)
-
-  output <- list(grid = envir, input = input, distances = matriz, values = values, gamma = gamma)
-  class(output) <- "gridmap"
+  output <- list(grid = grid, environments = envir, input = input, distances = matriz, values = values)
+  class(output) <- "environmentmap"
 
   return(output)
 
