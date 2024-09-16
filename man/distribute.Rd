@@ -16,6 +16,8 @@ distribute(
 }
 \arguments{
 \item{input}{Path to the input file}
+
+\item{lx}{Size of}
 }
 \value{
 gridmap

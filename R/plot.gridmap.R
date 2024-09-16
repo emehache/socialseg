@@ -21,6 +21,13 @@ log_trans <- function(base = exp(1)) {
 #' @export
 plot.gridmap <- function(gridmap, var, poligono = T, contour = F, per = .9, ...) {
 
+  if (missing(var)) {
+    vars <- setdiff(names(gridmap$grid), c("geom", "geometry", "id", "i"))
+    var <- vars[1]
+    if (length(vars) > 2) print(sprintf("Plotting %s. There are %s other variables available to plot.", var, length(vars) - 1))
+    else print(sprintf("Plotting %s. There is another variable available to plot.", var))
+    }
+
   graf <- ggplot() +
     geom_sf(data = gridmap$grid, aes(fill = .data[[var]]), col = NA) +
     theme_bw()
