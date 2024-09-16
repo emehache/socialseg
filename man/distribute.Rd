@@ -9,6 +9,7 @@ distribute(
   lx,
   ly = lx,
   vars,
+  bbox,
   crs = "+proj=utm +zone=21 +south +datum=WGS84 +units=m +no_defs",
   compute_distances = TRUE,
   ...

@@ -66,16 +66,21 @@ abline(h = 0, col = 2)
 ```{r}
 lx <- 100
 distribuido <- distribute(input = input, lx = lx, vars = vars) 
+bb <- st_bbox(input)
 
 data(input1985)
 input1985 <- st_transform(input1985, crs = st_crs(input))
-distribuido1985 <- distribute(input1985, lx = lx, vars = vars)
+distribuido1985 <- distribute(input1985, lx = lx, bbox = bb, vars = vars)
 
-# grid2011 <- st_make_grid(input, cellsize = c(lx, lx))
-# grid1985 <- st_make_grid(input1985, cellsize = c(lx, lx))
-# 
-# st_bbox(grid2011) %>% plot
-# st_bbox(grid1985) %>% points(col = 2)
+plot(distribuido)
+plot(distribuido1985)
+
+st_centroid(distribuido$grid) %>% 
+  st_coordinates() %>% 
+  plot(asp = 1)
+st_centroid(distribuido1985$grid) %>% 
+  st_coordinates() %>% 
+  points(col = 2, pch = 20)
 
 ```
 

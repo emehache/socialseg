@@ -54,21 +54,18 @@
 # }
 
 
-distribute <- function(input, lx, ly = lx, vars, crs = "+proj=utm +zone=21 +south +datum=WGS84 +units=m +no_defs", compute_distances = TRUE, ...) {
+distribute <- function(input, lx, ly = lx, vars, bbox, crs = "+proj=utm +zone=21 +south +datum=WGS84 +units=m +no_defs", compute_distances = TRUE, ...) {
 
   if (missing(vars)) {
     vars <- setdiff(names(input), "geom")
   }
 
-  # if (missing(xy)) {
-  #   xy <- st_bbox(input) %>%
-  #     matrix(2,2)
-  # }
-
   input$id <- 1:nrow(input)
 
   # grid <- st_make_grid(input, cellsize = c(lx, ly), crs = st_crs(input))
   grid <- st_make_grid(input, cellsize = c(lx, ly), ...)
+
+  if (!missing(bbox)) grid <- st_make_grid2(input, bb = bbox, cellsize = c(lx, ly), ...)
 
   intersects <- st_intersects(input, grid) %>%
     lapply(as.data.table) %>%
