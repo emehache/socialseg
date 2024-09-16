@@ -6,7 +6,7 @@
 ## Installation
 
 Install `socialseg` using the command
-`devtools::install_github("https://github.com/emehache/socialseg)`.
+`devtools::install_github("https://github.com/emehache/socialseg")`.
 
 ## Usage
 
