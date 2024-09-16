@@ -5,7 +5,7 @@
 #' @param input Path to the input file
 #' @return gridmap
 #' @export
-seg_profile <- function(gridmap, gamma, vars, nucleo = "quartic") {
+seg_profile <- function(gridmap, grid_gamma, vars, nucleo = "quartic") {
 
 
   grid <- gridmap$grid
@@ -15,58 +15,52 @@ seg_profile <- function(gridmap, gamma, vars, nucleo = "quartic") {
 
   if (missing(vars)) vars <- setdiff(names(grid), c("geom", "geometry", "id", "i"))
 
-  if (nucleo == "quartic") {
-    ker <- cvmgof::kernel.function.quart(matriz/gamma) %>%
-      Matrix::Matrix(sparse = T)
-    ker <- apply(ker, 1, \(x) x/sum(x)) %>% t
-  }
+  original <- original[, vars, with = F]
 
-  if (nucleo == "uniforme") {
-    ker <- matriz<=gamma
-    ker <- apply(ker, 1, \(x) x/sum(x)) %>% t
-  }
+  result <- sapply(grid_gamma, function(gamma) {
 
-  smoothed <- copy(original) %>%
-    .[, (vars) := lapply(.SD, \(x) crossprod(ker, x)), .SDcols = vars] %>%
-    .[]
+    if (nucleo == "quartic") {
+      ker <- cvmgof::kernel.function.quart(matriz/gamma) %>%
+        Matrix::Matrix(sparse = T)
+      ker <- apply(ker, 1, \(x) x/sum(x)) %>% t
+    }
 
-  envir <- envir %>%
-    as.data.table %>%
-    .[, (vars) := smoothed[,vars, with = F]] %>%
-    .[] %>%
-    st_as_sf()
+    if (nucleo == "uniforme") {
+      ker <- matriz<=gamma
+      ker <- apply(ker, 1, \(x) x/sum(x)) %>% t
+    }
+
+    # smoothed <- copy(original) %>%
+    #   .[, (vars) := lapply(.SD, \(x) crossprod(ker, x)), .SDcols = vars] %>%
+    #   .[]
 
 
-  tol <- .Machine$double.eps
 
-  dd <- grid %>%
-    as.data.table %>%
-    .[, vars, with = F]
+    tol <- .Machine$double.eps
 
-  ee <- smoothed[, vars, with = F]
+    dd <- original
+    ee <- crossprod(ker, as.matrix(copy(original)))
 
-  dd <- dd + tol
-  ee <- ee + tol
-  dd <- na.omit(dd)
-  ee <- na.omit(ee)
-  M <- ncol(dd)
-  tot <- sum(dd)
-  tot_p <- rowSums(dd)
-  tot_m <- colSums(dd)
-  pi_m <- tot_m/tot
-  pi_pm <- ee/rowSums(ee)
-  ent_p <- rowSums(-(dd/rowSums(dd))*log((dd/rowSums(dd)), base = M))
-  Ep <- rowSums(-pi_pm*log(pi_pm, base = M))
-  E <- -sum(pi_m * log(pi_m, base = M))
-  # H <- 1 - (sum(tot_p * Ep) / (tot * E))
-  Hp <- tot_p*(E-Ep)/tot/E
-  H <- sum(Hp)
+    dd <- dd + tol
+    ee <- ee + tol
+    dd <- na.omit(dd)
+    ee <- na.omit(ee)
+    M <- ncol(dd)
+    tot <- sum(dd)
+    tot_p <- rowSums(dd)
+    tot_m <- colSums(dd)
+    pi_m <- tot_m/tot
+    pi_pm <- ee/rowSums(ee)
+    ent_p <- rowSums(-(dd/rowSums(dd))*log((dd/rowSums(dd)), base = M))
+    Ep <- rowSums(-pi_pm*log(pi_pm, base = M))
+    E <- -sum(pi_m * log(pi_m, base = M))
+    # H <- 1 - (sum(tot_p * Ep) / (tot * E))
+    Hp <- tot_p*(E-Ep)/tot/E
+    H <- sum(Hp)
+    return(H)
+  })
 
-  values <- list(H = H, Hp = Hp, tot = tot, E = E, tot_p = tot_p, ent_p = ent_p)
-  envir <- cbind(envir, Ep = Ep, tot_p = tot_p, Hp = Hp)
-
-  output <- list(grid = grid, environments = envir, input = input, distances = matriz, values = values)
-  class(output) <- "environmentmap"
+  output <- data.table(gamma = grid_gamma, H = result)
 
   return(output)
 

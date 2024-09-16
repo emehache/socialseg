@@ -14,9 +14,10 @@ Install `socialseg` using the command
 data(input)
 
 vars <- c("nivel_edu_alto", "nivel_edu_bajo")
+lx <- 100
 
 distribuido <- input %>% 
-  distribute(lx = 100, vars = vars) 
+  distribute(lx = lx, vars = vars) 
 
 plot(distribuido, var = vars[1])
 
@@ -29,4 +30,15 @@ plot(entornos, var = "Hp")
 coef(distribuido)
 coef(suavizado)
 coef(entornos)
+```
+
+### Segregation profile
+
+``` r
+
+grid_gamma <- seq(lx, 3e3, length.out = 11)
+perfil <- seg_profile(gridmap = suavizado, grid_gamma = grid_gamma, vars = vars)
+
+plot(H ~ gamma, data = perfil, type = "o", pch = 20)
+abline(h = 0, col = 2)
 ```

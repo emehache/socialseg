@@ -4,7 +4,7 @@
 \alias{seg_profile}
 \title{Distribute the data}
 \usage{
-seg_profile(gridmap, gamma, vars, nucleo = "quartic")
+seg_profile(gridmap, grid_gamma, vars, nucleo = "quartic")
 }
 \arguments{
 \item{input}{Path to the input file}
