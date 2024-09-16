@@ -3,7 +3,12 @@
 
 # socialseg
 
-# Usage
+## Installation
+
+Install `socialseg` using the command
+`devtools::install_github("https://github.com/emehache/socialseg)`.
+
+## Usage
 
 ``` r
 data(input)
