@@ -4,13 +4,21 @@
 \alias{distribute}
 \title{Distribute the data}
 \usage{
-distribute(input, Ngrid, lx, ly, vars, verbose = T)
+distribute(
+  input,
+  lx,
+  ly = lx,
+  vars,
+  crs = "+proj=utm +zone=21 +south +datum=WGS84 +units=m +no_defs",
+  compute_distances = TRUE,
+  ...
+)
 }
 \arguments{
 \item{input}{Path to the input file}
 }
 \value{
-A data.table
+gridmap
 }
 \description{
 This function ...

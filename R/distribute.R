@@ -3,95 +3,131 @@
 #' This function ...
 #'
 #' @param input Path to the input file
-#' @return A data.table
+#' @return gridmap
 #' @export
 
-distribute <- function(input, Ngrid, lx, ly, vars, verbose = T){
-  #Ngrid=50
+# distribute <- function(input, lx, ly = lx, vars, crs = "+proj=utm +zone=21 +south +datum=WGS84 +units=m +no_defs", ...) {
+#
+#   if (missing(vars)) {
+#     vars <- setdiff(names(input), "geom")
+#   }
+#
+#   # if (missing(xy)) {
+#   #   xy <- st_bbox(input) %>%
+#   #     matrix(2,2)
+#   # }
+#
+#   input$id <- 1:nrow(input)
+#
+#   # grid <- st_make_grid(input, cellsize = c(lx, ly), crs = st_crs(input))
+#   grid <- st_make_grid(input, cellsize = c(lx, ly), ...)
+#
+#   intersects <- st_intersects(input, grid) %>%
+#     lapply(as.data.table) %>%
+#     rbindlist(idcol = "id") %>%
+#     .[, id := as.numeric(id)] %>%
+#     setnames("V1", "i") %>%
+#     .[]
+#
+#   data <- st_drop_geometry(input) %>%
+#     as.data.table() %>%
+#     .[, vars, with = F] %>%
+#     .[, id := .I] %>%
+#     .[]
+#
+#   distributed_data <- intersects %>%
+#     .[, by = id, .(.N, i)] %>%
+#     merge(data) %>%
+#     .[ , (vars) := lapply(.SD, \(x) x/N), .SDcols = vars] %>%
+#     .[, keyby = i, lapply(.SD, sum), .SDcols = vars] %>%
+#     .[]
+#
+#   grid <- as.data.table(grid) %>%
+#     .[, i:=1:.N] %>%
+#     .[] %>%
+#     merge(distributed_data) %>%
+#     st_as_sf()
+#
+#   return(grid)
+#
+# }
 
-  if (!missing(vars)) {
-    if (length(vars) > 1) input@data <- input@data[, vars]
-    else input@data <- as.data.frame(input@data[, vars]); names(input@data) <- vars
+
+distribute <- function(input, lx, ly = lx, vars, crs = "+proj=utm +zone=21 +south +datum=WGS84 +units=m +no_defs", compute_distances = TRUE, ...) {
+
+  if (missing(vars)) {
+    vars <- setdiff(names(input), "geom")
   }
 
-  xy <- bbox(input)
+  # if (missing(xy)) {
+  #   xy <- st_bbox(input) %>%
+  #     matrix(2,2)
+  # }
 
-  # Create a nrow * ncol grid point data set
-  if (!missing(Ngrid)) {
-    coords <- expand.grid(x = seq(xy[1,1], xy[1,2], length.out = Ngrid),
-                          y = seq(xy[2,1], xy[2,2], length.out = Ngrid))
-  }
+  input$id <- 1:nrow(input)
 
-  if (!missing(lx)) {
-    if (missing(ly)) ly <- lx
-    coords <- expand.grid(x = seq(xy[1,1], xy[1,2], by = lx),
-                          y = seq(xy[2,1], xy[2,2], by = ly))
-  }
+  # grid <- st_make_grid(input, cellsize = c(lx, ly), crs = st_crs(input))
+  grid <- st_make_grid(input, cellsize = c(lx, ly), ...)
 
-  coords <- coords %>%
-    as.data.table %>%
-    .[, i := .I] %>%
-    .[]
-
-  coords_sp <- SpatialPoints(coords, proj4string = input@proj4string)
-
-  CoordsInPoly <- over(input, coords_sp, returnList = T) %>%
+  intersects <- st_intersects(input, grid) %>%
     lapply(as.data.table) %>%
     rbindlist(idcol = "id") %>%
     .[, id := as.numeric(id)] %>%
     setnames("V1", "i") %>%
     .[]
 
-  # id = identificador del poligono, de 1 a 780.
-  # el i es el identificador del punto en la grilla
+  data <- st_drop_geometry(input) %>%
+    as.data.table() %>%
+    .[, vars, with = F] %>%
+    .[, id := .I] %>%
+    .[]
 
-  coords <- merge(coords, CoordsInPoly, all.x = T)
+  distributed_data <- intersects %>%
+    .[, by = id, .(.N, i)] %>%
+    merge(data) %>%
+    .[ , (vars) := lapply(.SD, \(x) x/N), .SDcols = vars] %>%
+    .[, keyby = i, lapply(.SD, sum), .SDcols = vars] %>%
+    .[]
 
-  id_poly <- sapply(input@polygons, \(i) i@ID) %>%
-    as.numeric
+  grid <- as.data.table(grid) %>%
+    .[, i:=1:.N] %>%
+    .[] %>%
+    merge(distributed_data) %>%
+    st_as_sf()
 
-
-  # vars <- names(as.data.table(input))
-
-  data <- input %>%
-    rgeos::gCentroid(byid = T) %>%
-    .@coords %>%
-    cbind(as.data.table(input)) %>%
-    .[, id := id_poly] %>%
-    merge(CoordsInPoly) %>%
-    .[,-c("x", "y")] %>%
-    merge(coords, by = c("id", "i"), all.y = T) %>%
-    .[!is.na(id), by = id, N := .N] %>%
-    melt(id.vars = c(1:2, as.numeric(ncol(.))-2,as.numeric(ncol(.))-1,as.numeric(ncol(.)))) %>%
-    # .[, value_pond := value/N/lx/ly] %>% # esto para que sea una densidad
-    .[, value_pond := value/N] %>% # expresado en personas por cuadrado
-    dcast(id + i + x + y + N ~ variable, value.var = "value_pond") %>%
-    .[order(x,y)]
-
-  # N es la cantidad de puntos de la grilla en cada poligono
-
-  puntos_problema <- data[, by = .(x,y), .N] %>%
-    .[N>1, !"N"] %>%
-    merge(data, by = c("x", "y")) %>%
-    .[, unique(i)]
-
-  # vars <- names(input@data)
-  data[i %in% puntos_problema, by = i,(vars) := lapply(.SD, mean), .SDcols = vars]
-  data <- unique(data, by = c("x", "y", vars))
-
-
-  if (verbose) {
-    # id_faltantes <- setdiff(1:nrow(input),unique(data$id))
-    id_faltantes <- setdiff(id_poly,unique(data$id))
-    cat("Cantidad de poligonos no representados en la grilla:", length(id_faltantes), "\n")
-
-    cat("Suma de las variables en los polígonos faltantes:\n")
-    input %>%
-      as.data.table %>%
-      .[id_faltantes] %>%
-      colSums(na.rm = T) %>%
-      print
+  if (compute_distances){
+    distances <- grid %>%
+      st_geometry() %>%
+      st_centroid() %>%
+      st_distance(which = "Euclidean") %>%
+      as.numeric %>%
+      matrix(nrow(grid))
+  } else {
+    distances <- NULL
   }
 
-  return(data)
+  tol <- .Machine$double.eps
+
+  dd <- grid %>%
+    as.data.table %>%
+    .[, vars, with = F]
+
+  dd <- dd + tol
+  dd <- na.omit(dd)
+  M <- ncol(dd)
+  tot <- sum(dd)
+  tot_p <- rowSums(dd)
+  tot_m <- colSums(dd)
+  pi_m <- tot_m/tot
+  ent_p <- rowSums(-(dd/rowSums(dd))*log((dd/rowSums(dd)), base = M))
+  E <- -sum(pi_m * log(pi_m, base = M))
+  (H <- 1 - (sum(tot_p * ent_p) / (tot * E)))
+
+  values <- list(H = H, tot = tot, E = E, tot_p = tot_p, ent_p = ent_p)
+
+  output <- list(grid = grid, input = input, distances = distances, values = values)
+  class(output) <- "gridmap"
+
+  return(output)
+
 }

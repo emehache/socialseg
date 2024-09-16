@@ -1,0 +1,81 @@
+roxygen2::roxygenise()
+read("data/zona6-2011.rda")
+readRDS("data/zona6-2011.rda")
+roxygen2::roxygenise()
+roxygen2::roxygenise()
+roxygen2::roxygenise()
+roxygen2::roxygenise()
+roxygen2::roxygenise()
+roxygen2::roxygenise()
+rlang::last_trace()
+rlang::last_trace(drop = FALSE)
+roxygen2::roxygenise()
+roxygen2::roxygenise()
+roxygen2::roxygenise()
+readRDS("data/zona6.RData")
+readRDS("data/zona6.RData")
+readRDS("/home/manuel/Descargas/zona6")
+readRDS("/home/manuel/Descargas/zona6")
+socialseg::input
+socialseg::input %>% plot()
+library(magrittr)
+socialseg::input %>% plot()
+socialseg::input
+socialseg::input %>% estimate()
+roxygen2::roxygenise()
+file <- list.files("/home/manuel/Dropbox/Documentos/juanpablolabat/datos", full.names = T)
+file
+file <- list.files("/home/manuel/Dropbox/Documentos/juanpablolabat/datos", full.names = T)[3]
+input<-st_read(file, quiet = T) %>%
+.[grep("*20$",.$LOCALIDAD),]
+roxygen2::roxygenise()
+input<-st_read(file, quiet = T) %>%
+.[grep("*20$",.$LOCALIDAD),]
+input<-st_transform(input, crs=32721) %>%
+as_Spatial()
+save(input, "data/input.RData")
+save(input,file = "data/input.RData")
+roxygen2::roxygenise()
+socialseg::input
+file
+file = "/home/manuel/Dropbox/Documentos/juanpablolabat/datos/capa2011indZona_6.gpkg"
+input<-st_read(file, quiet = T) %>%
+.[grep("*20$",.$LOCALIDAD),]
+input<-st_transform(input, crs=32721) %>%
+as_Spatial()
+save(input, "data/input.RData")
+save(input, file = "data/input.RData")
+roxygen2::roxygenise()
+roxygen2::roxygenise()
+roxygen2::roxygenise()
+roxygen2::roxygenise()
+gpkg_to_spatial <- function(file, loc20 = T){
+input<-st_read(file, quiet = T)
+if (loc20) input <- input %>%
+.[grep("*20$",.$LOCALIDAD),]
+input<-st_transform(input, crs=32721) %>%
+as_Spatial()
+}
+rm(gpkg_to_spatial())
+rm(gpkg_to_spatial
+rm(gpkg_to_spatial)
+roxygen2::roxygenise()
+roxygen2::roxygenise()
+roxygen2::roxygenise()
+roxygen2::roxygenise()
+roxygen2::roxygenise()
+roxygen2::roxygenise()
+roxygen2::roxygenise()
+roxygen2::roxygenise()
+citation("socialseg")
+install.packages("usethis")
+library(usethis)
+use_readme_rmd()
+use_readme_rmd()
+roxygen2::roxygenise()
+roxygen2::roxygenise()
+roxygen2::roxygenise()
+roxygen2::roxygenise()
+roxygen2::roxygenise()
+roxygen2::roxygenise()
+roxygen2::roxygenise()
