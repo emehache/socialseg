@@ -68,7 +68,7 @@ environments <- function(gridmap, gamma, vars, nucleo = "quartic") {
 
   values <- list(H = H, Hp = Hp, tot = tot, E = E, tot_p = tot_p, ent_p = ent_p)
 
-  output <- list(grid = envir, input = input, distances = matriz, values = values, gamma = gamma)
+  output <- list(grid = envir, input = input, distances = matriz, values = values, lx_ly = gridmap$lx_ly, gamma = gamma)
   class(output) <- "gridmap"
 
   return(output)

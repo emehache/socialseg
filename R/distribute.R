@@ -123,7 +123,7 @@ distribute <- function(input, lx, ly = lx, vars, bbox, crs = "+proj=utm +zone=21
 
   values <- list(H = H, tot = tot, E = E, tot_p = tot_p, ent_p = ent_p)
 
-  output <- list(grid = grid, input = input, distances = distances, values = values)
+  output <- list(grid = grid, input = input, distances = distances, values = values, lx_ly = c(lx = lx, ly = ly))
   class(output) <- "gridmap"
 
   return(output)

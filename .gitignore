@@ -1,3 +1,5 @@
 .Rproj.user
 .Rhistory
 README_cache/
+*.old
+pruebas.R

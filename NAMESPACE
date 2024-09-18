@@ -2,6 +2,7 @@
 
 S3method(coef,gridmap)
 S3method(plot,gridmap)
+export(diff_grid)
 export(distribute)
 export(environments)
 export(log_trans)

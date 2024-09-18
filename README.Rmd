@@ -59,28 +59,17 @@ perfil <- seg_profile(gridmap = suavizado, grid_gamma = grid_gamma, vars = vars)
 
 plot(H ~ gamma, data = perfil, type = "o", pch = 20)
 abline(h = 0, col = 2)
+
 ```
 
-### Differences between maps (en proceso)
+### Differences between maps
 
 ```{r}
-lx <- 100
-distribuido <- distribute(input = input, lx = lx, vars = vars) 
-bb <- st_bbox(input)
+diferencia <- diff_grid(distribuido, distribuido1985, var = vars[1])
+plot(diferencia)
 
-data(input1985)
-input1985 <- st_transform(input1985, crs = st_crs(input))
-distribuido1985 <- distribute(input1985, lx = lx, bbox = bb, vars = vars)
-
-plot(distribuido)
-plot(distribuido1985)
-
-st_centroid(distribuido$grid) %>% 
-  st_coordinates() %>% 
-  plot(asp = 1)
-st_centroid(distribuido1985$grid) %>% 
-  st_coordinates() %>% 
-  points(col = 2, pch = 20)
+diferencia2 <- diff_grid(distribuido1985, distribuido, var = vars[1])
+plot(diferencia2)
 
 ```
 
