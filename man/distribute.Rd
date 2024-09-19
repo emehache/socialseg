@@ -18,7 +18,19 @@ distribute(
 \arguments{
 \item{input}{Path to the input file}
 
-\item{lx}{Size of}
+\item{lx}{Size of grid (width)}
+
+\item{ly}{Size of grid (height)}
+
+\item{vars}{name}
+
+\item{bbox}{square}
+
+\item{crs}{coordinates}
+
+\item{compute_distances}{ar}
+
+\item{...}{optional}
 }
 \value{
 gridmap

@@ -5,8 +5,12 @@
 
 ## Installation
 
-Install `socialseg` using the command
-`devtools::install_github("https://github.com/emehache/socialseg")`.
+Install `socialseg` using the following code:
+
+``` r
+install.packages("remotes")
+remotes::install_github("https://github.com/emehache/socialseg")
+```
 
 ## Usage
 
