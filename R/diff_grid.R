@@ -19,7 +19,6 @@ diff_grid <- function(gridmapX, gridmapY, var) {
   vars <- paste0(var, c(".x", ".y"))
 
   ### Avisar que gridmapX y gridmapY deben tener el mismo lx_ly
-
   grid <- st_make_grid(bb, cellsize = gridmapX$lx_ly)
 
   ies <- union(gridx$i, gridy$i)
@@ -32,12 +31,8 @@ diff_grid <- function(gridmapX, gridmapY, var) {
     .[, (setdiff(names(.), "geometry")) := lapply(.SD, \(x) nafill(x, fill = 0)), .SDcols = setdiff(names(.), "geometry")] %>%
     .[]
 
-
   var1 <- grid[, vars[1], with = F]
   var2 <- grid[, vars[2], with = F]
-  # var1[is.na(var1)] <- 0
-  # var2[is.na(var2)] <- 0
-
 
   grid <- grid %>%
     .[, (var) := var1-var2] %>%
@@ -47,5 +42,4 @@ diff_grid <- function(gridmapX, gridmapY, var) {
   gridmapX$grid <- grid
 
   return(gridmapX)
-
 }

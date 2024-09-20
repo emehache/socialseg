@@ -71,7 +71,7 @@ matriz <- gridmap$distances
 
   values <- list(H = H, tot = tot, E = E, tot_p = tot_p, ent_p = ent_p)
 
-  output <- list(grid = suavizado, input = gridmap$input, distances = gridmap$distances, values = values, lx_ly = gridmap$lx_ly)
+  output <- list(grid = suavizado, input = gridmap$input, distances = gridmap$distances, values = values, lx_ly = gridmap$lx_ly, sigma = sigma)
   class(output) <- "gridmap"
 
   return(output)

@@ -2,6 +2,7 @@
 
 S3method(coef,gridmap)
 S3method(plot,gridmap)
+S3method(plot,seg_profile)
 export(diff_grid)
 export(distribute)
 export(environments)
@@ -9,4 +10,5 @@ export(log_trans)
 export(reverselog_trans)
 export(save_gpkg)
 export(seg_profile)
+export(simulated_profile)
 export(smoothgrid)

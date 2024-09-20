@@ -8,7 +8,6 @@
 #'
 environments <- function(gridmap, gamma, vars, nucleo = "quartic") {
 
-
   grid <- gridmap$grid
   original <- st_drop_geometry(grid)
   envir <- gridmap$grid
@@ -37,14 +36,26 @@ environments <- function(gridmap, gamma, vars, nucleo = "quartic") {
     .[] %>%
     st_as_sf()
 
-
-  tol <- .Machine$double.eps
-
   dd <- grid %>%
     as.data.table %>%
     .[, vars, with = F]
 
   ee <- smoothed[, vars, with = F]
+
+  values <- estimate_index(dd, ee)
+
+  envir <- cbind(envir, Ep = values$Ep, tot_p = values$tot_p, Hp = values$Hp)
+
+  output <- list(grid = envir, input = input, distances = matriz, values = values, lx_ly = gridmap$lx_ly, sigma = gridmap$sigma, gamma = gamma)
+  class(output) <- "gridmap"
+
+  return(output)
+
+}
+
+
+#' @keywords internal
+estimate_index <- function(dd, ee, tol = .Machine$double.eps) {
 
   dd <- dd + tol
   ee <- ee + tol
@@ -59,18 +70,10 @@ environments <- function(gridmap, gamma, vars, nucleo = "quartic") {
   ent_p <- rowSums(-(dd/rowSums(dd))*log((dd/rowSums(dd)), base = M))
   Ep <- rowSums(-pi_pm*log(pi_pm, base = M))
   E <- -sum(pi_m * log(pi_m, base = M))
-  # H <- 1 - (sum(tot_p * Ep) / (tot * E))
+  # H <- 1 - (sum(tot_p * Ep) / (tot   * E))
   Hp <- tot_p*(E-Ep)/tot/E
   H <- sum(Hp)
 
-
-  envir <- cbind(envir, Ep = Ep, tot_p = tot_p, Hp = Hp)
-
-  values <- list(H = H, Hp = Hp, tot = tot, E = E, tot_p = tot_p, ent_p = ent_p)
-
-  output <- list(grid = envir, input = input, distances = matriz, values = values, lx_ly = gridmap$lx_ly, gamma = gamma)
-  class(output) <- "gridmap"
-
-  return(output)
-
+  values <- list(H = H, Hp = Hp, tot = tot, E = E, tot_p = tot_p, ent_p = ent_p, Ep = Ep)
+  return(values)
 }

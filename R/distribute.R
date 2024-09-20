@@ -23,8 +23,9 @@ distribute <- function(input, lx, ly = lx, vars, bbox, crs = "+proj=utm +zone=21
 
   # grid <- st_make_grid(input, cellsize = c(lx, ly), crs = st_crs(input))
   grid <- st_make_grid(input, cellsize = c(lx, ly), ...)
+  # grid <-st_intersection(grid, input)
 
-  # if (!missing(bbox)) grid <- st_make_grid2(input, bb = bbox, cellsize = c(lx, ly), ...)
+  if (!missing(bbox)) grid <- st_make_grid2(input, bb = bbox, cellsize = c(lx, ly), ...)
 
   intersects <- st_intersects(input, grid) %>%
     lapply(as.data.table) %>%
@@ -82,7 +83,7 @@ distribute <- function(input, lx, ly = lx, vars, bbox, crs = "+proj=utm +zone=21
 
   values <- list(H = H, tot = tot, E = E, tot_p = tot_p, ent_p = ent_p)
 
-  output <- list(grid = grid, input = input, distances = distances, values = values, lx_ly = c(lx = lx, ly = ly))
+  output <- list(grid = grid, input = input, distances = distances, values = values, lx_ly = c(lx = lx, ly = ly), sigma = NULL)
   class(output) <- "gridmap"
 
   return(output)

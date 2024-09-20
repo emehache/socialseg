@@ -23,7 +23,6 @@ lx <- 100
 distribuido <- input %>% 
   distribute(lx = lx, vars = vars) 
 
-
 plot(distribuido, var = vars[1])
 
 suavizado <- smoothgrid(distribuido, sigma = 200)
@@ -37,22 +36,30 @@ coef(suavizado)
 coef(entornos)
 ```
 
-### Segregation profile
-
-``` r
-grid_gamma <- seq(lx, 3e3, length.out = 11)
-perfil <- seg_profile(gridmap = suavizado, grid_gamma = grid_gamma, vars = vars)
-
-plot(H ~ gamma, data = perfil, type = "o", pch = 20)
-abline(h = 0, col = 2)
-```
-
 ### Differences between maps
 
 ``` r
+vars <- c("nivel_edu_alto", "nivel_edu_bajo")
+data("input1985")
+input1985 <- st_transform(input1985, crs=32721)
+bb <- st_bbox(input)
+distribuido1985 <- input1985 %>% 
+  distribute(lx = lx, vars = vars, bbox = bb)
 diferencia <- diff_grid(distribuido, distribuido1985, var = vars[1])
 plot(diferencia)
 
 diferencia2 <- diff_grid(distribuido1985, distribuido, var = vars[1])
 plot(diferencia2)
+```
+
+### Segregation profile with confidence bands
+
+``` r
+roxygen2::roxygenise()
+
+perfil <- seg_profile(suavizado, N = 100, vars = vars)
+plot(perfil)
+
+perfil2 <- seg_profile(suavizado, N = 0, vars = vars)
+plot(perfil2)
 ```

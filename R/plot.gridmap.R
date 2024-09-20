@@ -47,21 +47,12 @@ plot.gridmap <- function(gridmap, var, poligono = T, contour = F, per = .9, ...)
   return(graf)
 }
 
-# #' @export
-# plot.environmentmap <- function(gridmap, ...) {
-#
-#   gridmap$grid <- gridmap$environments
-#   # grid$environments <- NULL
-#   class(gridmap) <- "gridmap"
-#   plot(gridmap, ...)
-#
-# }
 
 #' @export
 coef.gridmap <- function(gridmap) {
 
 out <- c(H = gridmap$values$H)
-if ("gamma" %in% names(gridmap)) print(paste0("Entornos construidos con gamma = ", gridmap[["gamma"]]))
+if ("gamma" %in% names(gridmap)) names(out) <- sprintf("H(%s)", gridmap$gamma)
 
 return(out)
 }
