@@ -2,7 +2,7 @@
 % Please edit documentation in R/distribute.R
 \name{distribute}
 \alias{distribute}
-\title{Distribute the data}
+\title{Distribute the data over a grid}
 \usage{
 distribute(
   input,
@@ -16,25 +16,30 @@ distribute(
 )
 }
 \arguments{
-\item{input}{Path to the input file}
+\item{input}{Object of class \link{sf}.}
 
-\item{lx}{Size of grid (width)}
+\item{lx, ly}{Numeric of length 1, with the size of gridcells.}
 
-\item{ly}{Size of grid (height)}
+\item{vars}{Vector of variables names of data.}
 
-\item{vars}{name}
+\item{bbox}{Object of class \link{bbox}.}
 
-\item{bbox}{square}
+\item{crs}{Coordinates reference system.}
 
-\item{crs}{coordinates}
-
-\item{compute_distances}{ar}
+\item{compute_distances}{Logical, if \code{TRUE} (default) the distance matrix between grid cells is calculated.}
 
 \item{...}{optional}
 }
 \value{
-gridmap
+Object of class \code{gridmap}
 }
 \description{
-This function ...
+\code{distribute} makes a regular grid of cells with sizes \code{c(lx,ly)}, divide the raw data stored in original polygons and distribute it over the grid.
+}
+\examples{
+\dontrun{
+data(input)
+distributed <- distribute(input = input, lx = 100, vars = c("nivel_edu_alto", "nivel_edu_bajo"))
+plot(distributed)
+}
 }

@@ -15,5 +15,5 @@ diff_grid(gridmapX, gridmapY, var)
 gridmap
 }
 \description{
-This function ...
+Distribute the data
 }

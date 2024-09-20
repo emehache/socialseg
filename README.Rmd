@@ -74,8 +74,6 @@ plot(diferencia2)
 
 ### Segregation profile with confidence bands
 ```{r}
-roxygen2::roxygenise()
-
 perfil <- seg_profile(suavizado, N = 100, vars = vars)
 plot(perfil)
 

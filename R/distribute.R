@@ -1,18 +1,24 @@
-#' Distribute the data
+#' Distribute the data over a grid
 #'
-#' This function ...
+#' `distribute` makes a regular grid of cells with sizes \code{c(lx,ly)}, divide the raw data stored in original polygons and distribute it over the grid.
 #'
-#' @param input Path to the input file
-#' @param lx Size of grid (width)
-#' @param ly Size of grid (height)
-#' @param vars name
-#' @param bbox square
-#' @param crs coordinates
-#' @param compute_distances ar
+#' @param input Object of class \link{sf}.
+#' @param lx,ly Numeric of length 1, with the size of gridcells.
+#' @param vars Vector of variables names of data.
+#' @param bbox Object of class \link{bbox}.
+#' @param crs Coordinates reference system.
+#' @param compute_distances Logical, if `TRUE` (default) the distance matrix between grid cells is calculated.
 #' @param ... optional
-#' @return gridmap
+#'
+#' @return Object of class `gridmap`
+#'
 #' @export
-
+#' @examples
+#' \dontrun{
+#'data(input)
+#'distributed <- distribute(input = input, lx = 100, vars = c("nivel_edu_alto", "nivel_edu_bajo"))
+#'plot(distributed)
+#'}
 distribute <- function(input, lx, ly = lx, vars, bbox, crs = "+proj=utm +zone=21 +south +datum=WGS84 +units=m +no_defs", compute_distances = TRUE, ...) {
 
   if (missing(vars)) {

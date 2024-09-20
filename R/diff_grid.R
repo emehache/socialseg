@@ -1,6 +1,6 @@
 #' Distribute the data
 #'
-#' This function ...
+#'
 #'
 #' @param input Path to the input file
 #' @param lx Size of
