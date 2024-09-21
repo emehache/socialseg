@@ -61,3 +61,41 @@ plot(perfil)
 perfil2 <- seg_profile(suavizado, N = 0, vars = vars)
 plot(perfil2)
 ```
+
+### Workflow for processing multiple files
+
+``` r
+path_to_files <- "~/Dropbox/Documentos/juanpablolabat/datos3"
+files <- list.files(path = path_to_files, full.names = T)[-1]
+
+# setting the parameters
+lx <- 100
+sigma <- 200
+vars <- c("nivel_edu_alto", "nivel_edu_bajo")
+
+set.seed(1234)
+results <- lapply(files, function(file) {
+  input_data <- st_read(file) %>% 
+    st_transform(crs = 32721) %>% 
+    .[grep("*20$", x= .$LOCALIDAD),]
+  
+  data <- input_data %>%
+    distribute(lx = lx, vars = vars) %>% 
+    smoothgrid(sigma = sigma)
+  
+  seg_profile(data)
+})
+
+saveRDS(results, file = "~/Dropbox/Documentos/juanpablolabat/resultados/estimacion20240920.rds")
+```
+
+``` r
+
+lapply(results, function(res) {
+  plot(res)
+})
+
+sapply(results, \(res) {
+  res$results[,"H"]
+}) %>% matplot(type = "l", lty = 1)
+```
