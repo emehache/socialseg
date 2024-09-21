@@ -107,24 +107,28 @@ path_to_files <- "~/Dropbox/Documentos/juanpablolabat/datos3"
 files <- list.files(path = path_to_files, full.names = T)[-1]
 
 # setting the parameters
-lx <- 100
+lx <- 300
 sigma <- 200
 vars <- c("nivel_edu_alto", "nivel_edu_bajo")
 
 set.seed(1234)
-results <- lapply(files, function(file) {
+results <- lapply(files[1:3], function(file) {
   input_data <- st_read(file) %>% 
     st_transform(crs = 32721) %>% 
     .[grep("*20$", x= .$LOCALIDAD),]
   
   data <- input_data %>%
-    distribute(lx = lx, vars = vars) %>% 
-    smoothgrid(sigma = sigma)
+    distribute(lx = lx, vars = vars)
+    # smoothgrid(sigma = sigma)
   
   seg_profile(data)
 })
 
-saveRDS(results, file = "~/Dropbox/Documentos/juanpablolabat/resultados/estimacion20240920.rds")
+# saveRDS(results, file = "~/Dropbox/Documentos/juanpablolabat/resultados/estimacion20240920.rds")
+```
+
+```{r}
+# results <- readRDS("~/Dropbox/Documentos/juanpablolabat/resultados/estimacion20240920.rds")
 ```
 
 ```{r}
@@ -136,5 +140,10 @@ lapply(results, function(res) {
 sapply(results, \(res) {
   res$results[,"H"]
 }) %>% matplot(type = "l", lty = 1)
+
+sapply(results, \(res) {
+  res$values[c("Hmicro","Hmacro")]
+}) %>% t
+
 ```
 

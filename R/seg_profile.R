@@ -51,13 +51,21 @@ plot.seg_profile <- function(seg_profile){
       geom_ribbon(aes(x = seg_profile$grid_gamma, ymin = `.01`, ymax = `.99`, fill = "band"),
                   alpha = .75, show.legend = F) +
       geom_line(aes(x = seg_profile$grid_gamma, y = H)) +
+    # annotate(geom = "point",
+    #          x = c(seg_profile$values["gamma_micro"], seg_profile$values["gamma_macro"]),
+    #          y = c(seg_profile$values["Hmicro"], seg_profile$values["Hmacro"]), col = 4) +
+    # annotate(geom = "segment",
+    #          x = c(seg_profile$values["gamma_micro"], seg_profile$values["gamma_macro"]),
+    #          y = c(0, 0),
+    #          yend = c(seg_profile$values["Hmicro"], seg_profile$values["Hmacro"]),
+    #          lty = 2, col = 4) +
       annotate(geom = "point",
-               x = c(seg_profile$values["gamma_micro"], seg_profile$values["gamma_macro"]),
-               y = c(seg_profile$values["Hmicro"], seg_profile$values["Hmacro"]), col = 4) +
+               x = c(seg_profile$values$gamma_micro, seg_profile$values$gamma_macro),
+               y = c(seg_profile$values$Hmicro, seg_profile$values$Hmacro), col = 4) +
       annotate(geom = "segment",
-               x = c(seg_profile$values["gamma_micro"], seg_profile$values["gamma_macro"]),
+               x = c(seg_profile$values$gamma_micro, seg_profile$values$gamma_macro),
                y = c(0, 0),
-               yend = c(seg_profile$values["Hmicro"], seg_profile$values["Hmacro"]),
+               yend = c(seg_profile$values$Hmicro, seg_profile$values$Hmacro),
                lty = 2, col = 4) +
       xlab(expression(gamma)) +
       theme_bw()
@@ -158,7 +166,7 @@ seg_profile <- function(gridmap, vars, frac = .25, L = 5, grid_gamma, N = 100, n
 
     # si el rango de grid_gamma es pequeño, pueden aparecer NA porque no exploro lo suficiente
 
-    output <- list(results = results, grid_gamma = grid_gamma, values = c(Hmicro = Hmicro, Hmacro = Hmacro, gamma_micro = gamma_micro, gamma_macro = gamma_macro))
+    output <- list(results = results, grid_gamma = grid_gamma, values = list(Hmicro = Hmicro, Hmacro = Hmacro, gamma_micro = gamma_micro, gamma_macro = gamma_macro))
     class(output) <- "seg_profile"
   } else {
     colnames(results) <- "H"

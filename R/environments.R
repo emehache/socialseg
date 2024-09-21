@@ -46,8 +46,13 @@ environments <- function(gridmap, gamma, vars, nucleo = "quartic") {
 
   envir <- cbind(envir, Ep = values$Ep, tot_p = values$tot_p, Hp = values$Hp)
 
-  output <- list(grid = envir, input = input, distances = matriz, values = values, lx_ly = gridmap$lx_ly, sigma = gridmap$sigma, gamma = gamma)
-  class(output) <- "gridmap"
+  output <- gridmap
+  output$grid <- envir
+  output$values <- values
+  output$sigma <- sigma
+  output$gamma <- gamma
+  # output <- list(grid = envir, input = input, distances = matriz, values = values, lx_ly = gridmap$lx_ly, sigma = gridmap$sigma, gamma = gamma)
+  # class(output) <- "gridmap"
 
   return(output)
 
