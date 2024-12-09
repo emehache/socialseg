@@ -28,8 +28,11 @@ distribute <- function(input, lx, ly = lx, vars, bbox, crs = "+proj=utm +zone=21
   input$id <- 1:nrow(input)
 
   # grid <- st_make_grid(input, cellsize = c(lx, ly), crs = st_crs(input))
-  grid <- st_make_grid(input, cellsize = c(lx, ly), ...)
-  # grid <-st_intersection(grid, input)
+  grid <- st_make_grid(input, cellsize = c(lx, ly))
+  grid <- st_intersection(grid, st_union(st_buffer(input, dist = .1)))
+
+
+
 
   if (!missing(bbox)) grid <- st_make_grid2(input, bb = bbox, cellsize = c(lx, ly), ...)
 
@@ -50,7 +53,7 @@ distribute <- function(input, lx, ly = lx, vars, bbox, crs = "+proj=utm +zone=21
     .[, by = id, .(.N, i)] %>%
     merge(data) %>%
     .[ , (vars) := lapply(.SD, \(x) x/N), .SDcols = vars] %>%
-    .[, keyby = i, lapply(.SD, sum), .SDcols = vars] %>%
+    .[, keyby = .(i, id), lapply(.SD, sum), .SDcols = vars] %>%
     .[]
 
   grid <- as.data.table(grid) %>%
@@ -76,6 +79,7 @@ distribute <- function(input, lx, ly = lx, vars, bbox, crs = "+proj=utm +zone=21
     as.data.table %>%
     .[, vars, with = F]
 
+  # length vars debe ser mayor a 1
   dd <- dd + tol
   dd <- na.omit(dd)
   M <- ncol(dd)
