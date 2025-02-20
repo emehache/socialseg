@@ -44,7 +44,7 @@ environments <- function(gridmap, gamma, vars, nucleo = "quartic") {
 
   values <- estimate_index(dd, ee)
 
-  envir <- cbind(envir, Ep = values$Ep, tot_p = values$tot_p, Hp = values$Hp)
+  envir <- cbind(envir, Ep = values$Ep, tot_p = values$tot_p, Hp = values$Hp, totEp = values$totEp)
 
   output <- gridmap
   output$grid <- envir
@@ -74,11 +74,13 @@ estimate_index <- function(dd, ee, tol = .Machine$double.eps) {
   pi_pm <- ee/rowSums(ee)
   ent_p <- rowSums(-(dd/rowSums(dd))*log((dd/rowSums(dd)), base = M))
   Ep <- rowSums(-pi_pm*log(pi_pm, base = M))
+  # Ep[tot_p < 1e-15] <- 0
   E <- -sum(pi_m * log(pi_m, base = M))
   # H <- 1 - (sum(tot_p * Ep) / (tot   * E))
+  totEp <- tot_p*Ep
   Hp <- tot_p*(E-Ep)/tot/E
   H <- sum(Hp)
 
-  values <- list(H = H, Hp = Hp, tot = tot, E = E, tot_p = tot_p, ent_p = ent_p, Ep = Ep)
+  values <- list(H = H, Hp = Hp, tot = tot, E = E, tot_p = tot_p, ent_p = ent_p, Ep = Ep, totEp = totEp)
   return(values)
 }

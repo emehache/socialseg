@@ -53,14 +53,14 @@ distribute <- function(input, lx, ly = lx, vars, bbox, crs = "+proj=utm +zone=21
     .[, by = id, .(.N, i)] %>%
     merge(data) %>%
     .[ , (vars) := lapply(.SD, \(x) x/N), .SDcols = vars] %>%
-    .[, keyby = .(i, id), lapply(.SD, sum), .SDcols = vars] %>%
+    .[, keyby = .(i), lapply(.SD, sum), .SDcols = vars] %>%
     .[]
 
   grid <- as.data.table(grid) %>%
     .[, i:=1:.N] %>%
     .[] %>%
-    merge(distributed_data) %>%
-    st_as_sf()
+    merge(distributed_data, all.x = T) %>%
+    st_as_sf
 
   if (compute_distances){
     distances <- grid %>%
@@ -72,6 +72,10 @@ distribute <- function(input, lx, ly = lx, vars, bbox, crs = "+proj=utm +zone=21
   } else {
     distances <- NULL
   }
+
+
+
+
 
   tol <- .Machine$double.eps
 

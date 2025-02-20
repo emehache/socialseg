@@ -56,3 +56,18 @@ if ("gamma" %in% names(gridmap)) names(out) <- sprintf("H(%s)", gridmap$gamma)
 
 return(out)
 }
+
+
+
+#' @export
+print.gridmap <- function(gridmap) {
+
+  print(head(gridmap$grid,1))
+  cat("--------- \n")
+  print(head(gridmap$input, 0))
+  cat("--------- \n")
+  print(str(gridmap[!names(smoothed) %in% c("grid","input")]))
+  cat("--------- \n")
+  invisible(cat(sprintf("Object of class %s", class(gridmap))))
+
+  }
