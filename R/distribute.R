@@ -81,7 +81,7 @@ distribute <- function(input, lx, ly = lx, vars, bbox, crs = "+proj=utm +zone=21
 
   grid <- na.omit(grid)
 
-  distances <- distances[-na_index, -na_index]
+  if (length(na_index) > 0) distances <- distances[-na_index, -na_index]
 
   ### FIN AGREGADO 20250221
 
