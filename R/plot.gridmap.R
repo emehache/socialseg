@@ -66,7 +66,7 @@ print.gridmap <- function(gridmap) {
   cat("--------- \n")
   print(head(gridmap$input, 0))
   cat("--------- \n")
-  print(str(gridmap[!names(smoothed) %in% c("grid","input")]))
+  print(str(gridmap[!names(gridmap) %in% c("grid","input")]))
   cat("--------- \n")
   invisible(cat(sprintf("Object of class %s", class(gridmap))))
 

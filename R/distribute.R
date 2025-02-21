@@ -73,9 +73,17 @@ distribute <- function(input, lx, ly = lx, vars, bbox, crs = "+proj=utm +zone=21
     distances <- NULL
   }
 
+  ### AGREGADO 20250221
+  na_index <- grid %>%
+    as.data.table %>%
+    na.omit(inver = T) %>%
+    .[,i]
 
+  grid <- na.omit(grid)
 
+  distances <- distances[-na_index, -na_index]
 
+  ### FIN AGREGADO 20250221
 
   tol <- .Machine$double.eps
 

@@ -14,7 +14,7 @@ smoothgrid <- function(gridmap, sigma, vars, nucleo = "quartic") {
 
   if (sigma == 0) return(distribuido)
   if (missing(vars)) vars <- setdiff(names(distribuido), c("id", "i"))
-  distribuido[distribuido[,which(is.na(.SD)), .SDcols = vars[1]], (vars) := 0]
+  # distribuido[distribuido[,which(is.na(.SD)), .SDcols = vars[1]], (vars) := 0] # modificado 20250221
   distribuido <- na.omit(distribuido)
 
   # if (missing(matriz)) {
