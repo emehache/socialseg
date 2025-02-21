@@ -15,6 +15,7 @@ remotes::install_github("https://github.com/emehache/socialseg")
 ## Usage
 
 ``` r
+library(socialseg)
 data(input)
 
 vars <- c("nivel_edu_alto", "nivel_edu_bajo")
