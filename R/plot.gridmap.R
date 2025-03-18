@@ -44,6 +44,39 @@ plot.gridmap <- function(gridmap, var, poligono = T, contour = F, per = .9, ...)
       geom_sf(data = gridmap$input, linewidth = .03, alpha = .3, col = 1, fill = NA)
   }
 
+  if (contour) {
+
+    # data <- st_drop_geometry(gridmap$grid)[, var, with = F]
+    q <- gridmap$grid[, var, with = F] %>%
+      as.data.table %>%
+      .[order(-get(var))] %>%
+      .[ , prop := cumsum(get(var))/sum(get(var))] %>%
+      .[prop >= 1-per, get(var)[1]]
+
+    data2 <- gridmap$grid[, var, with = F] %>%
+      as.data.table %>%
+      .[get(var) >= q] %>%
+      .[] %>%
+      st_as_sf()
+
+
+#
+#     data <- st_coordinates(st_centroid(gridmap$grid)) %>%
+#       cbind(data)
+#
+#     g <- ggplot() +
+#       geom_contour(data = data, aes(x = X, y = Y, z = .data[[var]]), na.rm = T, breaks = q, col = 1,linewidth = 10)
+#
+#     contornos <- ggplot_build(g)$data[[1]] %>%
+#       as.data.table %>%
+#       .[,.(x,y, piece)]
+
+    graf <- graf +
+      # geom_path(data=contornos, aes(x,y,group = piece))
+      geom_sf(data = data2, fill = 4, alpha = .6, col = NA)
+
+  }
+
   return(graf)
 }
 

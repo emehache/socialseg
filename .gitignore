@@ -3,3 +3,4 @@
 README_cache/
 *.old
 pruebas.R
+toy_example_cache/ toy_example.Rmd toy_example.md
