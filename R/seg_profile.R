@@ -74,7 +74,7 @@ plot.seg_profile <- function(seg_profile){
 
 
 #' @export
-seg_profile <- function(gridmap, vars, frac = .25, L = 5, grid_gamma, N = 100, nucleo = "quartic") {
+seg_profile <- function(gridmap, vars, frac = .25, L = 5, grid_gamma, N = 100, g_micro, g_macro, nucleo = "quartic") {
 
   if (N == 1) stop("N must be greater than 1, otherwise set N=0.")
 
@@ -155,14 +155,31 @@ seg_profile <- function(gridmap, vars, frac = .25, L = 5, grid_gamma, N = 100, n
     results <- cbind(results[,1], t(apply(results[,-1], 1, quantile, prob = c(.01, .99))))
     colnames(results) <- c("H", ".01", ".99")
 
+    functionH <- approxfun(grid_gamma, results[,1])
+    functionHlo <- approxfun(grid_gamma, results[,2])
+    functionHup <- approxfun(grid_gamma, results[,3])
+
     m0 <- tryCatch({
-      uniroot(approxfun(grid_gamma, results[,1] - results[,3]), interval = range(grid_gamma))$root
+      # uniroot(approxfun(grid_gamma, results[,1] - results[,3]), interval = range(grid_gamma))$root
+      # agregado 20250318
+      roots <- rootSolve::uniroot.all(approxfun(grid_gamma, results[,1] - results[,3]), interval = range(grid_gamma))
+      min(roots[functionHlo(roots)*functionHup(roots)<0])
     }, error = function(foo) NULL)
-    D <- min(m0, diagonal*.25) - lx
+
+    D <- min(m0, diagonal*frac) - lx
     gamma_micro <- lx + D/L
     gamma_macro <- lx + D*(L-1)/L
-    Hmicro <- approxfun(grid_gamma, results[,1])(gamma_micro)
-    Hmacro <- approxfun(grid_gamma, results[,1])(gamma_macro)
+    Hmicro <- functionH(gamma_micro)
+    Hmacro <- functionH(gamma_macro)
+
+    if (!missing(g_micro)) {
+      gamma_micro <- g_micro
+      gamma_macro <- g_macro
+      Hmicro <- functionH(gamma_micro)
+      Hmacro <- functionH(gamma_macro)
+      # if ((functionH(gamma_macro)<functionHup(gamma_macro)) & (functionHlo(gamma_macro)*functionHup(gamma_macro)<0))
+    }
+
 
     # si el rango de grid_gamma es pequeño, pueden aparecer NA porque no exploro lo suficiente
 
