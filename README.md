@@ -40,12 +40,17 @@ coef(entornos)
 ### Differences between maps
 
 ``` r
+lx <- 100
 vars <- c("nivel_edu_alto", "nivel_edu_bajo")
-data("input1985")
+
+data(input)
+data(input1985)
 input1985 <- st_transform(input1985, crs=32721)
+
 bb <- st_bbox(input)
-distribuido1985 <- input1985 %>% 
-  distribute(lx = lx, vars = vars, bbox = bb)
+distribuido <- distribute(input, lx = lx, vars = vars, bbox = bb) 
+distribuido1985 <- distribute(input1985, lx = lx, vars = vars, bbox = bb)
+
 diferencia <- diff_grid(distribuido, distribuido1985, var = vars[1])
 plot(diferencia)
 
@@ -82,7 +87,7 @@ results <- lapply(files[1:3], function(file) {
   
   data <- input_data %>%
     distribute(lx = lx, vars = vars)
-    # smoothgrid(sigma = sigma)
+  # smoothgrid(sigma = sigma)
   
   seg_profile(data)
 })
