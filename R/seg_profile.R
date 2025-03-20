@@ -46,11 +46,11 @@
 #' @export
 plot.seg_profile <- function(seg_profile){
 
-    ggplot(seg_profile$results) +
-      geom_hline(yintercept = 0, col = "gray") +
-      geom_ribbon(aes(x = seg_profile$grid_gamma, ymin = `.01`, ymax = `.99`, fill = "band"),
-                  alpha = .75, show.legend = F) +
-      geom_line(aes(x = seg_profile$grid_gamma, y = H)) +
+  ggplot(seg_profile$results) +
+    geom_hline(yintercept = 0, col = "gray") +
+    geom_ribbon(aes(x = seg_profile$grid_gamma, ymin = `.01`, ymax = `.99`, fill = "band"),
+                alpha = .75, show.legend = F) +
+    geom_line(aes(x = seg_profile$grid_gamma, y = H)) +
     # annotate(geom = "point",
     #          x = c(seg_profile$values["gamma_micro"], seg_profile$values["gamma_macro"]),
     #          y = c(seg_profile$values["Hmicro"], seg_profile$values["Hmacro"]), col = 4) +
@@ -59,16 +59,16 @@ plot.seg_profile <- function(seg_profile){
     #          y = c(0, 0),
     #          yend = c(seg_profile$values["Hmicro"], seg_profile$values["Hmacro"]),
     #          lty = 2, col = 4) +
-      annotate(geom = "point",
-               x = c(seg_profile$values$gamma_micro, seg_profile$values$gamma_macro),
-               y = c(seg_profile$values$Hmicro, seg_profile$values$Hmacro), col = 4) +
-      annotate(geom = "segment",
-               x = c(seg_profile$values$gamma_micro, seg_profile$values$gamma_macro),
-               y = c(0, 0),
-               yend = c(seg_profile$values$Hmicro, seg_profile$values$Hmacro),
-               lty = 2, col = 4) +
-      xlab(expression(gamma)) +
-      theme_bw()
+    annotate(geom = "point",
+             x = c(seg_profile$values$gamma_micro, seg_profile$values$gamma_macro),
+             y = c(seg_profile$values$Hmicro, seg_profile$values$Hmacro), col = 4) +
+    annotate(geom = "segment",
+             x = c(seg_profile$values$gamma_micro, seg_profile$values$gamma_macro),
+             y = c(0, 0),
+             yend = c(seg_profile$values$Hmicro, seg_profile$values$Hmacro),
+             lty = 2, col = 4) +
+    xlab(expression(gamma)) +
+    theme_bw()
 
 }
 
@@ -78,17 +78,44 @@ seg_profile <- function(gridmap, vars, frac = .25, L = 5, grid_gamma, N = 100, g
 
   if (N == 1) stop("N must be greater than 1, otherwise set N=0.")
 
-  grid <- gridmap$grid
-  matriz <- gridmap$distances
-  sigma <- gridmap$sigma
+  if (inherits(gridmap, "sf")) {
+    grid <- gridmap
+
+    grid <- grid %>%
+      as.data.table %>%
+      st_as_sf
+
+
+    matriz <- grid %>%
+      st_geometry() %>%
+      st_centroid() %>%
+      st_distance(which = "Euclidean") %>%
+      as.numeric() %>%
+      matrix(nrow = nrow(grid))
+    min_gamma <- 1
+    sigma <- NULL
+
+
+  } else {
+    grid <- gridmap$grid
+    matriz <- gridmap$distances
+    sigma <- gridmap$sigma
+    min_gamma <- min(gridmap$lx_ly)
+
+  }
 
   bb <- st_bbox(grid)
   diagonal <- norm(c(bb[3] - bb[1], bb[4] - bb[2]), "2")
 
-  if (missing(grid_gamma)) grid_gamma <- round(seq(min(gridmap$lx_ly), diagonal*frac, length.out = 15))
+  if (missing(grid_gamma)) grid_gamma <- round(seq(min_gamma, diagonal*frac, length.out = 15))
   if (missing(vars)) vars <- setdiff(names(grid), c("geom", "geometry", "id", "i"))
 
-  dd <- gridmap$grid %>%
+  colnames <-  as.data.table(grid)[, names(.SD), .SDcols = is.numeric] # column name vector
+
+  dd <- grid %>%
+    as.data.table %>%
+    .[, (colnames) := lapply(.SD, nafill, fill = 0), .SDcols= is.numeric] %>%
+    st_as_sf() %>%
     st_drop_geometry %>%
     .[, vars, with = F] %>%
     as.matrix
@@ -100,6 +127,7 @@ seg_profile <- function(gridmap, vars, frac = .25, L = 5, grid_gamma, N = 100, g
   tot_p <- rowSums(dd)
   tot_m <- colSums(dd)
   pi_m <- tot_m/tot
+
 
   simulaciones <- replicate(N, {
     # la linea siguiente hace que solo funcione para variables binarias, hay que cambiar a la multnomial
@@ -130,6 +158,7 @@ seg_profile <- function(gridmap, vars, frac = .25, L = 5, grid_gamma, N = 100, g
     crossprod(ker, simulaciones)
   }, simplify = "array")
 
+
   output <- sapply(1:(N+1), \(i) {
     ind <- (1:length(vars)) + length(vars)*(i-1)
     output[,ind,]
@@ -139,6 +168,7 @@ seg_profile <- function(gridmap, vars, frac = .25, L = 5, grid_gamma, N = 100, g
     ind <- (1:length(vars)) + length(vars)*(i-1)
     simulaciones[,ind]
   }, simplify = "array")
+
 
 
   results <- sapply(1:(N+1), function(rep) {
@@ -159,18 +189,25 @@ seg_profile <- function(gridmap, vars, frac = .25, L = 5, grid_gamma, N = 100, g
     functionHlo <- approxfun(grid_gamma, results[,2])
     functionHup <- approxfun(grid_gamma, results[,3])
 
-    m0 <- tryCatch({
-      # uniroot(approxfun(grid_gamma, results[,1] - results[,3]), interval = range(grid_gamma))$root
-      # agregado 20250318
-      roots <- rootSolve::uniroot.all(approxfun(grid_gamma, results[,1] - results[,3]), interval = range(grid_gamma))
-      min(roots[functionHlo(roots)*functionHup(roots)<0])
-    }, error = function(foo) NULL)
-
-    D <- min(m0, diagonal*frac) - lx
-    gamma_micro <- lx + D/L
-    gamma_macro <- lx + D*(L-1)/L
+    gamma_micro <- 300
+    gamma_macro <- max(grid_gamma)
     Hmicro <- functionH(gamma_micro)
     Hmacro <- functionH(gamma_macro)
+    if (between(Hmacro, functionHlo(gamma_macro), functionHup(gamma_macro)) | Hmacro < 0)  Hmacro <- 0
+
+
+    # m0 <- tryCatch({
+    #   # uniroot(approxfun(grid_gamma, results[,1] - results[,3]), interval = range(grid_gamma))$root
+    #   # agregado 20250318
+    #   roots <- rootSolve::uniroot.all(approxfun(grid_gamma, results[,1] - results[,3]), interval = range(grid_gamma))
+    #   min(roots[functionHlo(roots)*functionHup(roots)<0])
+    # }, error = function(foo) NULL)
+    #
+    # D <- min(m0, diagonal*frac) - lx
+    # gamma_micro <- lx + D/L
+    # gamma_macro <- lx + D*(L-1)/L
+    # Hmicro <- functionH(gamma_micro)
+    # Hmacro <- functionH(gamma_macro)
 
     if (!missing(g_micro)) {
       gamma_micro <- g_micro
