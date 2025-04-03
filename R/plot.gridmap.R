@@ -21,6 +21,8 @@ log_trans <- function(base = exp(1)) {
 #' @export
 plot.gridmap <- function(gridmap, var, poligono = T, contour = F, per = .9, ...) {
 
+  if (inherits(gridmap, "sf")) gridmap <- list(grid = gridmap, input = gridmap)
+
   if (missing(var)) {
     vars <- setdiff(names(gridmap$grid), c("geom", "geometry", "id", "i"))
     var <- vars[1]

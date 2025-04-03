@@ -24,6 +24,7 @@ lx <- 100
 distribuido <- input %>% 
   distribute(lx = lx, vars = vars) 
 
+plot.gridmap(input, var = vars[1])
 plot(distribuido, var = vars[1])
 
 suavizado <- smoothgrid(distribuido, sigma = 200)
