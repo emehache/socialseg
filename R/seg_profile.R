@@ -193,7 +193,7 @@ seg_profile <- function(gridmap, vars, frac = .25, L = 5, grid_gamma, N = 100, g
     gamma_macro <- max(grid_gamma)
     Hmicro <- functionH(gamma_micro)
     Hmacro <- functionH(gamma_macro)
-    if (between(Hmacro, functionHlo(gamma_macro), functionHup(gamma_macro)) | Hmacro < 0)  Hmacro <- 0
+    if (data.table::between(Hmacro, functionHlo(gamma_macro), functionHup(gamma_macro)) | Hmacro < 0)  Hmacro <- 0
 
 
     # m0 <- tryCatch({
