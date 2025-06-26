@@ -19,7 +19,7 @@ log_trans <- function(base = exp(1)) {
 
 
 #' @export
-plot.gridmap <- function(gridmap, var, poligono = T, contour = F, per = .9, ...) {
+plot.gridmap <- function(gridmap, var, poligono = T, contour = F, per = .9, color_borde = "blue", ...) {
 
   if (inherits(gridmap, "sf")) gridmap <- list(grid = gridmap, input = gridmap)
 
@@ -61,7 +61,7 @@ plot.gridmap <- function(gridmap, var, poligono = T, contour = F, per = .9, ...)
       st_as_sf()
 
     graf <- graf +
-      geom_sf(data = data2, fill = 4, alpha = .6, col = NA)
+      geom_sf(data = data2, fill = color_borde, alpha = .4, color = NA)
 
   }
 
