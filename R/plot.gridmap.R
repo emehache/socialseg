@@ -37,13 +37,15 @@ plot.gridmap <- function(gridmap, var, poligono = T, contour = F, per = .9, colo
   graf <- graf +
     # scale_fill_gradient(low = "#FEF001", high = "#F00505",
     #                     na.value = "transparent", trans = log_trans(base = 2), ...)
-    scale_fill_gradient2(low = "blue", high = "red", mid = "gray95", midpoint = 0,
-                        na.value = "transparent", ...)
+    # scale_fill_gradient2(low = "blue", high = "red", mid = "gray95", midpoint = 0,
+    # na.value = "transparent", ...)
+    scale_fill_gradient2(low = "blue", high = "red", mid = "white", midpoint = 0,
+                        na.value = "gray50", ...)
 
 
   if (poligono) {
     graf <- graf +
-      geom_sf(data = gridmap$input, linewidth = .03, alpha = .3, col = 1, fill = NA)
+      geom_sf(data = gridmap$input, linewidth = .1, alpha = .3, col = 1, fill = NA)
   }
 
   if (contour) {
