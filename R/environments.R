@@ -58,7 +58,7 @@ environments <- function(gridmap, gamma, vars, nucleo = "quartic") {
 }
 
 
-#' @keywords internal
+#' @export
 estimate_index <- function(dd, ee, tol = .Machine$double.eps, vars) {
 
   if (inherits(dd, "sf")) dd <- st_drop_geometry(input[,vars]); clasica <- TRUE
