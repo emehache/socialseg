@@ -47,6 +47,9 @@ distribuido <- input %>%
 plot.gridmap(input, var = vars[1])
 plot(distribuido, var = vars[1])
 
+estimate_index(input, vars = vars)
+estimate_index(input, vars) # da error
+
 suavizado <- smoothgrid(distribuido, sigma = 200)
 plot(suavizado, var = vars[1])
 

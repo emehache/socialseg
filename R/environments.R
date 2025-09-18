@@ -59,9 +59,12 @@ environments <- function(gridmap, gamma, vars, nucleo = "quartic") {
 
 
 #' @keywords internal
-estimate_index <- function(dd, ee, tol = .Machine$double.eps) {
+estimate_index <- function(dd, ee, tol = .Machine$double.eps, vars) {
+
+  if (inherits(dd, "sf")) dd <- st_drop_geometry(input[,vars]); clasica <- TRUE
 
   if (missing(ee)) ee <- dd
+  if (inherits(ee, "character")) stop("si queres hacer la estimacion clasica, debes poner vars = el vector con el nombre de las variables")
 
   dd <- dd + tol
   ee <- ee + tol
@@ -83,6 +86,8 @@ estimate_index <- function(dd, ee, tol = .Machine$double.eps) {
   Hp <- tot_p*(E-Ep)/tot/E
   # H <- sum(Hp)
 
+
+  if (clasica) return(H)
   values <- list(H = H, tot = tot, E = E, tot_p = tot_p, ent_p = ent_p, Ep = Ep, Hp = Hp)
   return(values)
 }
