@@ -63,7 +63,6 @@ estimate_index <- function(dd, ee, tol = .Machine$double.eps, vars) {
 
   clasica <- FALSE
   if (inherits(dd, "sf")) {dd <- st_drop_geometry(input[,vars]); clasica <- TRUE}
-  if (clasica) return(H)
 
   if (missing(ee)) ee <- dd
   if (inherits(ee, "character")) stop("si queres hacer la estimacion clasica, debes poner vars = el vector con el nombre de las variables")
@@ -88,7 +87,7 @@ estimate_index <- function(dd, ee, tol = .Machine$double.eps, vars) {
   Hp <- tot_p*(E-Ep)/tot/E
   # H <- sum(Hp)
 
-
+  if (clasica) return(H)
   values <- list(H = H, tot = tot, E = E, tot_p = tot_p, ent_p = ent_p, Ep = Ep, Hp = Hp)
   return(values)
 }
