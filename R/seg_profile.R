@@ -74,7 +74,7 @@ plot.seg_profile <- function(seg_profile){
 
 
 #' @export
-seg_profile <- function(gridmap, vars, frac = .25, L = 5, grid_gamma, N = 100, g_micro, g_macro, nucleo = "quartic") {
+seg_profile <- function(gridmap, vars, frac = .25, L = 5, grid_gamma, N = 100, g_micro, g_macro, negative = FALSE, nucleo = "quartic") {
 
   if (N == 1) stop("N must be greater than 1, otherwise set N=0.")
 
@@ -196,6 +196,7 @@ seg_profile <- function(gridmap, vars, frac = .25, L = 5, grid_gamma, N = 100, g
     if (data.table::between(Hmacro, functionHlo(gamma_macro), functionHup(gamma_macro)) | Hmacro < 0)  Hmacro <- 0
 
 
+
     # m0 <- tryCatch({
     #   # uniroot(approxfun(grid_gamma, results[,1] - results[,3]), interval = range(grid_gamma))$root
     #   # agregado 20250318
@@ -217,6 +218,13 @@ seg_profile <- function(gridmap, vars, frac = .25, L = 5, grid_gamma, N = 100, g
       # if ((functionH(gamma_macro)<functionHup(gamma_macro)) & (functionHlo(gamma_macro)*functionHup(gamma_macro)<0))
     }
 
+    # truncado
+    if (!negative) {
+      results <- as.data.table(results)ya
+      results[,  H := fifelse(data.table::between(H, `.01`, `.99`) | H < 0, 0, H)][]
+      results <- as.matrix(results)
+      rownames(results) <- grid_gamma
+      }
 
     # si el rango de grid_gamma es pequeño, pueden aparecer NA porque no exploro lo suficiente
 
