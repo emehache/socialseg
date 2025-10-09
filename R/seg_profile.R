@@ -220,7 +220,7 @@ seg_profile <- function(gridmap, vars, frac = .25, L = 5, grid_gamma, N = 100, g
 
     # truncado
     if (!negative) {
-      results <- as.data.table(results)ya
+      results <- as.data.table(results)
       results[,  H := fifelse(data.table::between(H, `.01`, `.99`) | H < 0, 0, H)][]
       results <- as.matrix(results)
       rownames(results) <- grid_gamma
