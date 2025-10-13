@@ -19,7 +19,8 @@ log_trans <- function(base = exp(1)) {
 
 
 #' @export
-plot.gridmap <- function(gridmap, var, poligono = T, contour = F, per = .9, color_borde = "blue", ...) {
+# plot.gridmap <- function(gridmap, var, poligono = T, contour = F, per = .9, color_borde = "blue", ...) {
+plotgrid <- function(gridmap, var, poligono = T, contour = F, per = .9, color_borde = "blue", ...) {
 
   if (inherits(gridmap, "sf")) gridmap <- list(grid = gridmap, input = gridmap)
 

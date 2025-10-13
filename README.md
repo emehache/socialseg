@@ -8,7 +8,7 @@
 Install `socialseg` using the following code:
 
 ``` r
-install.packages("remotes")
+if (!require(remotes)) {install.packages("remotes"); require(remotes)}
 remotes::install_github("https://github.com/emehache/socialseg")
 ```
 
@@ -19,26 +19,30 @@ library(socialseg)
 data(input)
 
 vars <- c("nivel_edu_alto", "nivel_edu_bajo")
-lx <- 100
+lx <- 300
 
 distribuido <- input %>% 
   distribute(lx = lx, vars = vars) 
 
-plot.gridmap(input, var = vars[1])
-plot(distribuido, var = vars[1])
+plotgrid(input, var = vars[1])
+plotgrid(distribuido, var = vars[1])
 
 estimate_index(input, vars = vars)
 estimate_index(input, vars) # da error
 
 suavizado <- smoothgrid(distribuido, sigma = 200)
-plot(suavizado, var = vars[1])
+plotgrid(suavizado, var = vars[1])
 
 entornos <- environments(suavizado, gamma = 500, vars = vars)
-plot(entornos, var = "Hp")
+plotgrid(entornos, var = "Hp")
 
-coef(distribuido)
-coef(suavizado)
-coef(entornos)
+# coef(distribuido)
+# coef(suavizado)
+# coef(entornos)
+
+distribuido$values$H
+suavizado$values$H
+entornos$values$H
 ```
 
 ### Differences between maps
@@ -56,10 +60,10 @@ distribuido <- distribute(input, lx = lx, vars = vars, bbox = bb)
 distribuido1985 <- distribute(input1985, lx = lx, vars = vars, bbox = bb)
 
 diferencia <- diff_grid(distribuido, distribuido1985, var = vars[1])
-plot(diferencia)
+plotgrid(diferencia)
 
 diferencia2 <- diff_grid(distribuido1985, distribuido, var = vars[1])
-plot(diferencia2)
+plotgrid(diferencia2)
 ```
 
 ### Segregation profile with confidence bands
