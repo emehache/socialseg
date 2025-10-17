@@ -142,6 +142,8 @@ distribute <- function(input, lx, ly = lx, vars, bbox, crs = "+proj=utm +zone=21
     vars <- setdiff(names(input), "geom")
   }
 
+  if (inherits(input, "gridmap")) input <- input$input
+
   input$id <- 1:nrow(input)
 
   colnames <-  as.data.table(input)[, names(.SD), .SDcols = is.numeric]
@@ -269,6 +271,42 @@ distribute <- function(input, lx, ly = lx, vars, bbox, crs = "+proj=utm +zone=21
   values <- list(H = H, tot = tot, E = E, tot_p = tot_p, ent_p = ent_p)
 
   output <- list(grid = grid, input = input, distances = distances, values = values, lx_ly = c(lx = lx, ly = ly), sigma = NULL)
+  class(output) <- "gridmap"
+
+  return(output)
+
+}
+
+
+#' @export
+as_gridmap <- function(input, vars) {
+
+  if (missing(vars)) {
+    vars <- setdiff(names(input), "geom")
+  }
+
+
+  tol <- .Machine$double.eps
+
+  dd <- input %>%
+    as.data.table %>%
+    .[, vars, with = F]
+
+  # length vars debe ser mayor a 1
+  dd <- dd + tol
+  dd <- na.omit(dd)
+  M <- ncol(dd)
+  tot <- sum(dd)
+  tot_p <- rowSums(dd)
+  tot_m <- colSums(dd)
+  pi_m <- tot_m/tot
+  ent_p <- rowSums(-(dd/rowSums(dd))*log((dd/rowSums(dd)), base = M))
+  E <- -sum(pi_m * log(pi_m, base = M))
+  (H <- 1 - (sum(tot_p * ent_p) / (tot * E)))
+
+  values <- list(H = H, tot = tot, E = E, tot_p = tot_p, ent_p = ent_p)
+
+  output <- list(grid = input, input = input, distances = NULL, values = values, lx_ly = NULL, sigma = NULL)
   class(output) <- "gridmap"
 
   return(output)

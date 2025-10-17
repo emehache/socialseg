@@ -21,34 +21,33 @@ data(input)
 vars <- c("nivel_edu_alto", "nivel_edu_bajo")
 lx <- 300
 
-distribuido <- input %>% 
+input_grid <- as_gridmap(input, vars = vars)
+
+plot(input_grid)
+
+distribuido <- input_grid %>% 
   distribute(lx = lx, vars = vars) 
 
-plotgrid(input, var = vars[1])
-plotgrid(distribuido, var = vars[1])
+plot(input_grid, var = vars[1])
+plot(distribuido, var = vars[1])
 
-estimate_index(input, vars = vars)
-estimate_index(input, vars) # da error
 
-suavizado <- smoothgrid(distribuido, sigma = 200)
-plotgrid(suavizado, var = vars[1])
+"suavizado <- smoothgrid(distribuido, sigma = 200)
+plot(suavizado, var = vars[1])
 
 entornos <- environments(suavizado, gamma = 500, vars = vars)
-plotgrid(entornos, var = "Hp")
+plot(entornos, var = "Hp")
 
-# coef(distribuido)
-# coef(suavizado)
-# coef(entornos)
-
-distribuido$values$H
-suavizado$values$H
-entornos$values$H
+coef(input_grid)
+coef(distribuido)
+coef(suavizado)
+coef(entornos)
 ```
 
 ### Differences between maps
 
 ``` r
-lx <- 100
+lx <- 300
 vars <- c("nivel_edu_alto", "nivel_edu_bajo")
 
 data(input)
@@ -60,10 +59,10 @@ distribuido <- distribute(input, lx = lx, vars = vars, bbox = bb)
 distribuido1985 <- distribute(input1985, lx = lx, vars = vars, bbox = bb)
 
 diferencia <- diff_grid(distribuido, distribuido1985, var = vars[1])
-plotgrid(diferencia)
+plot(diferencia)
 
 diferencia2 <- diff_grid(distribuido1985, distribuido, var = vars[1])
-plotgrid(diferencia2)
+plot(diferencia2)
 ```
 
 ### Segregation profile with confidence bands
@@ -88,7 +87,7 @@ sigma <- 200
 vars <- c("nivel_edu_alto", "nivel_edu_bajo")
 
 set.seed(1234)
-results <- lapply(files[1:3], function(file) {
+results <- lapply(fi"les[1:3], function(file) {
   input_data <- st_read(file) %>% 
     st_transform(crs = 32721) %>% 
     .[grep("*20$", x= .$LOCALIDAD),]
